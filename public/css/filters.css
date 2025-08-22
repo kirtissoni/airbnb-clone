@@ -1,0 +1,56 @@
+#filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter {
+  text-align: center;
+  margin-right: 2rem;
+  margin-top: 2rem;
+  opacity: 0.7;
+  color: black;
+  text-decoration: none;
+}
+
+.filter i {
+  font-size: 1.5rem;
+}
+
+.filter:hover {
+  opacity: 1;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.filter p {
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  color: inherit;
+}
+
+.filter:visited,
+.filter:active {
+  color: black;
+  text-decoration: none;
+}
+
+.filter.active {
+  opacity: 1;
+  transform: scale(1.1);
+  border-bottom: 2px solid red;
+}
+
+.tax-info {
+  display: none;
+}
+
+.tax-toggle {
+  border: 1px solid black;
+  border-radius: 1rem;
+  height: 3.25rem;
+  padding: 1rem;
+  margin-left: 2rem;
+  display: flex;
+  align-items: center;
+}
