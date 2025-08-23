@@ -41,49 +41,64 @@ module.exports.showListings = async (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
-  console.log("req.file:", req.file);
-  console.log("req.body.listing:", req.body.listing);
+  try {
+    console.log("req.file:", req.file);
+    console.log("req.body.listing:", req.body.listing);
 
-  let url = req.file?.path;
-  let filename = req.file?.filename;
+    let url = req.file?.path;
+    let filename = req.file?.filename;
 
-  // Geocoding
-  const geoResponse = await fetch(
-    `https://nominatim.openstreetmap.org/search?format=json&q=${req.body.listing.location}`
-  );
-  const geoData = await geoResponse.json();
+    // --- Geocoding ---
+    const geoResponse = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        req.body.listing.location
+      )}`,
+      {
+        headers: {
+          "User-Agent": "Airbnb-Clone-App/1.0 (kibhumi@gmail.com)",
+        },
+      }
+    );
 
-  const newListing = new Listing(req.body.listing);
-  newListing.owner = req.user._id;
+    let geoData = [];
+    try {
+      geoData = await geoResponse.json();
+    } catch (err) {
+      console.error("Error parsing geocoding JSON:", err);
+    }
 
-  // Image handling
-  if (url && filename) {
-    newListing.image = { url, filename };
-  } else {
-    // Default image
-    newListing.image = {
-      url: "https://via.placeholder.com/600x400?text=No+Image+Available",
-      filename: "default",
-    };
+    const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
+
+    // --- Image handling ---
+    if (url && filename) {
+      newListing.image = { url, filename };
+    } else {
+      newListing.image = {
+        url: "https://via.placeholder.com/600x400?text=No+Image+Available",
+        filename: "default",
+      };
+    }
+
+    // --- Save coordinates if available ---
+    if (geoData.length > 0) {
+      newListing.geometry = {
+        type: "Point",
+        coordinates: [parseFloat(geoData[0].lon), parseFloat(geoData[0].lat)],
+      };
+    } else {
+      newListing.geometry = {
+        type: "Point",
+        coordinates: [0, 0],
+      };
+    }
+
+    await newListing.save();
+    req.flash("success", "New Listing Created!!");
+    res.redirect("/listings");
+  } catch (err) {
+    next(err);
   }
-
-  // save Coordinates if have
-  if (geoData.length > 0) {
-    newListing.geometry = {
-      type: "Point",
-      coordinates: [parseFloat(geoData[0].lon), parseFloat(geoData[0].lat)],
-    };
-  } else {
-    //if invalid / not found
-    newListing.geometry = {
-      type: "Point",
-      coordinates: [0, 0],
-    };
-  }
-
-  await newListing.save();
-  req.flash("success", "New Listing Created!!");
-  res.redirect("/listings");
 };
 
 module.exports.searchListings = async (req, res) => {
