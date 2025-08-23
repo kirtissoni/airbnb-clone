@@ -86,7 +86,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/listings", listingRouter);
-app.use("/listings/:id/reviews", reviewRouter);
+app.use("/listings/:listingId/reviews", reviewRouter);
 app.use("/", userRouter);
 
 app.get("/", (req, res) => {
@@ -96,10 +96,6 @@ app.get("/", (req, res) => {
 app.use((err, req, res, next) => {
   let { statusCode = 500, message = "Something went wrong" } = err;
   res.status(statusCode).render("error.ejs", { message });
-});
-
-app.all("*", (req, res, next) => {
-  res.status(404).render("error.ejs", { message: "Page Not Found" });
 });
 
 const PORT = process.env.PORT || 8080;
