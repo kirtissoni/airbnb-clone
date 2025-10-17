@@ -1,0 +1,85 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg rounded-5 p-5 bg-white">
+        <h2 class="text-center mb-4 fw-bold">Edit Profile</h2>
+
+        <!-- Show current profile picture -->
+        <div class="text-center mb-4">
+          <img
+            src="<%= user.profileImage || 'https://cdn-icons-png.flaticon.com/512/847/847969.png' %>"
+            alt="Profile Picture"
+            class="rounded-circle shadow-sm"
+            width="130"
+          />
+        </div>
+
+        <form
+          action="/profile/edit?_method=PUT"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <!-- Username -->
+          <div class="mb-3">
+            <label for="username" class="form-label fw-semibold"
+              >Username</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              name="username"
+              value="<%= user.username %>"
+              required
+            />
+          </div>
+
+          <!-- Email -->
+          <div class="mb-3">
+            <label for="email" class="form-label fw-semibold">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              value="<%= user.email %>"
+              required
+            />
+          </div>
+
+          <!-- Bio -->
+          <div class="mb-3">
+            <label for="bio" class="form-label fw-semibold">Bio</label>
+            <textarea class="form-control" id="bio" name="bio" rows="3">
+<%= user.bio ? user.bio : "" %></textarea
+            >
+          </div>
+
+          <!-- Profile Image Upload -->
+          <div class="mb-3">
+            <label for="profileImage" class="form-label fw-semibold"
+              >Change Profile Picture</label
+            >
+            <input
+              type="file"
+              class="form-control"
+              id="profileImage"
+              name="profileImage"
+              accept="image/*"
+            />
+          </div>
+
+          <!-- Buttons -->
+          <div class="d-flex justify-content-between mt-4">
+            <a href="/profile" class="btn btn-outline-secondary px-4">Cancel</a>
+            <button type="submit" class="btn btn-primary px-4">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
